@@ -1,0 +1,25 @@
+node_modules/
+**/node_modules/
+
+# Environment files (never commit secrets)
+.env
+.env.*
+*.env
+*.env.local
+backend/.env
+front-end/.env.local
+
+# Backend build outputs
+backend/dist/
+backend/src/**/*.js
+backend/src/**/*.js.map
+backend/src/**/*.d.ts
+
+# TypeScript incremental metadata
+*.tsbuildinfo
+
+# Potentially sensitive key/cert files
+*.pem
+*.key
+*.crt
+*.p12

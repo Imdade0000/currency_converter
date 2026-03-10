@@ -1,0 +1,81 @@
+﻿Audit FR accents - 2026-03-04 18:56:21
+Root: C:\Users\Imdade\Desktop\currency-converter
+Total files scanned: 153
+Total suspect occurrences: 35
+
+By pattern:
+- genere: 31
+- marchE: 2
+- acces: 2
+
+Details:
+[genere] C:\Users\Imdade\Desktop\currency-converter\backend\src\admin\admin.service.ts:91 | Genere... -> version accentuee
+  -> generatedAt: now.toISOString(),
+[acces] C:\Users\Imdade\Desktop\currency-converter\backend\src\admin\guards\admin.guard.ts:13 | Acces -> Acces avec accent
+  -> throw new ForbiddenException('Acces admin refuse');
+[acces] C:\Users\Imdade\Desktop\currency-converter\backend\src\admin\guards\admin.guard.ts:23 | Acces -> Acces avec accent
+  -> throw new ForbiddenException('Acces admin refuse');
+[genere] C:\Users\Imdade\Desktop\currency-converter\backend\src\api-keys\api-keys.controller.ts:4 | Genere... -> version accentuee
+  -> import { GenerateKeyDto } from './dto/generate-key.dto';
+[genere] C:\Users\Imdade\Desktop\currency-converter\backend\src\api-keys\api-keys.controller.ts:14 | Genere... -> version accentuee
+  -> @Post('generate')
+[genere] C:\Users\Imdade\Desktop\currency-converter\backend\src\api-keys\api-keys.controller.ts:16 | Genere... -> version accentuee
+  -> generate(@Request() req, @Body() generateKeyDto: GenerateKeyDto) {
+[genere] C:\Users\Imdade\Desktop\currency-converter\backend\src\api-keys\api-keys.controller.ts:17 | Genere... -> version accentuee
+  -> return this.apiKeysService.generateKey(req.user.id, generateKeyDto);
+[genere] C:\Users\Imdade\Desktop\currency-converter\backend\src\api-keys\api-keys.service.ts:3 | Genere... -> version accentuee
+  -> import { GenerateKeyDto } from './dto/generate-key.dto';
+[genere] C:\Users\Imdade\Desktop\currency-converter\backend\src\api-keys\api-keys.service.ts:10 | Genere... -> version accentuee
+  -> async generateKey(userId: string, generateKeyDto: GenerateKeyDto) {
+[genere] C:\Users\Imdade\Desktop\currency-converter\backend\src\api-keys\api-keys.service.ts:15 | Genere... -> version accentuee
+  -> switch (generateKeyDto.plan) {
+[genere] C:\Users\Imdade\Desktop\currency-converter\backend\src\api-keys\api-keys.service.ts:24 | Genere... -> version accentuee
+  -> name: generateKeyDto.name,
+[genere] C:\Users\Imdade\Desktop\currency-converter\backend\src\api-keys\api-keys.service.ts:26 | Genere... -> version accentuee
+  -> plan: generateKeyDto.plan,
+[genere] C:\Users\Imdade\Desktop\currency-converter\backend\src\api-keys\dto\generate-key.dto.ts:4 | Genere... -> version accentuee
+  -> export class GenerateKeyDto {
+[genere] C:\Users\Imdade\Desktop\currency-converter\backend\src\auth\auth.service.ts:51 | Genere... -> version accentuee
+  -> const token = this.generateToken(user.id, user.email);
+[genere] C:\Users\Imdade\Desktop\currency-converter\backend\src\auth\auth.service.ts:96 | Genere... -> version accentuee
+  -> const token = this.generateToken(user.id, user.email);
+[genere] C:\Users\Imdade\Desktop\currency-converter\backend\src\auth\auth.service.ts:127 | Genere... -> version accentuee
+  -> const token = this.generateToken(user.id, user.email);
+[genere] C:\Users\Imdade\Desktop\currency-converter\backend\src\auth\auth.service.ts:224 | Genere... -> version accentuee
+  -> private generateToken(userId: string, email: string): string {
+[genere] C:\Users\Imdade\Desktop\currency-converter\front-end\pages\admin.tsx:120 | Genere... -> version accentuee
+  -> <p className="text-xs text-slate-500 mt-8">{isFr ? 'DerniÃ¨re mise Ã  jour' : 'Last update'}: {new Date(stats.generatedAt).toLocaleString(isFr ? 'fr-FR' : 'en-US')}</p>
+[marchE] C:\Users\Imdade\Desktop\currency-converter\front-end\pages\alerts.tsx:67 | Marche -> Marche avec accent selon contexte
+  -> <p className="text-slate-600">{isFr ? 'Soyez notifiÃ© des que le marche bouge en votre faveur.' : 'Get notifiÃ©d as soon as the market moves in your favor.'}</p>
+[genere] C:\Users\Imdade\Desktop\currency-converter\front-end\pages\api-docs.tsx:287 | Genere... -> version accentuee
+  -> <li>{isFr ? '2. GÃ©nÃ©rez une clÃ© API depuis le dashboard' : '2. Generate an API key from dashboard'}</li>
+[genere] C:\Users\Imdade\Desktop\currency-converter\front-end\pages\api-docs.tsx:380 | Genere... -> version accentuee
+  -> <Link href="/dashboard" className="btn-primary inline-block">{isFr ? 'GÃ©nÃ©rer ma clÃ© API' : 'Generate my API key'} â†’</Link>
+[genere] C:\Users\Imdade\Desktop\currency-converter\front-end\pages\dashboard.tsx:4 | Genere... -> version accentuee
+  -> import { getApiKeys, generateApiKey, ApiKey, toggle2Fa } from '@/services/api';
+[genere] C:\Users\Imdade\Desktop\currency-converter\front-end\pages\dashboard.tsx:31 | Genere... -> version accentuee
+  -> await generateApiKey(isFr ? 'Cle par defaut' : 'Default key', 'free');
+[genere] C:\Users\Imdade\Desktop\currency-converter\front-end\pages\dashboard.tsx:32 | Genere... -> version accentuee
+  -> toast.success(isFr ? 'Nouvelle clÃ© gÃ©nÃ©rÃ©e !' : 'New API key generated!');
+[genere] C:\Users\Imdade\Desktop\currency-converter\front-end\pages\dashboard.tsx:35 | Genere... -> version accentuee
+  -> toast.error(isFr ? 'Erreur lors de la generation' : 'Unable to generate key');
+[genere] C:\Users\Imdade\Desktop\currency-converter\front-end\pages\dashboard.tsx:120 | Genere... -> version accentuee
+  -> <button type="button" onClick={handleGenerateKey} className="btn-primary w-full">{isFr ? 'GÃ©nÃ©rer une clÃ© API' : 'Generate API key'}</button>
+[marchE] C:\Users\Imdade\Desktop\currency-converter\front-end\pages\index.tsx:52 | Marche -> Marche avec accent selon contexte
+  -> <FeatureCard icon="ðŸ“Š" title={isFr ? 'Analyses avancees' : 'Advanced analytics'} description={isFr ? 'Historique complet et graphiques interactifs pour anticiper le marche.' : 'Full history and interactive charts to anticipate market moves.'} />
+[genere] C:\Users\Imdade\Desktop\currency-converter\front-end\pages\index.tsx:80 | Genere... -> version accentuee
+  -> <Link href="/dashboard" className="btn-secondary bg-transparent border-slate-600 text-white hover:border-blue-400 hover:text-blue-400 text-center">{isFr ? 'GÃ©nÃ©rer une clÃ© API' : 'Generate an API key'}</Link>
+[genere] C:\Users\Imdade\Desktop\currency-converter\front-end\pages\sitemap.xml.tsx:48 | Genere... -> version accentuee
+  -> function generateSitemap(blogSlugs: string[]): string {
+[genere] C:\Users\Imdade\Desktop\currency-converter\front-end\pages\sitemap.xml.tsx:120 | Genere... -> version accentuee
+  -> const sitemap = generateSitemap(blogSlugs);
+[genere] C:\Users\Imdade\Desktop\currency-converter\front-end\pages\terms.tsx:11 | Genere... -> version accentuee
+  -> <title>{isFr ? 'Conditions generales | XChange' : 'Terms of service | XChange'}</title>
+[genere] C:\Users\Imdade\Desktop\currency-converter\front-end\pages\terms.tsx:14 | Genere... -> version accentuee
+  -> <h1>{isFr ? "Conditions generales d'utilisation" : 'Terms of service'}</h1>
+[genere] C:\Users\Imdade\Desktop\currency-converter\front-end\services\api.ts:112 | Genere... -> version accentuee
+  -> generatedAt: string;
+[genere] C:\Users\Imdade\Desktop\currency-converter\front-end\services\api.ts:267 | Genere... -> version accentuee
+  -> export const generateApiKey = async (name: string, plan: string): Promise<{ apiKey: string }> => {
+[genere] C:\Users\Imdade\Desktop\currency-converter\front-end\services\api.ts:268 | Genere... -> version accentuee
+  -> const response = await apiClient.post('/api-keys/generate', { name, plan });

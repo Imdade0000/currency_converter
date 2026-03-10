@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+  <body style="margin:0;padding:0;background-color:#f4f6fb;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#f4f6fb;padding:24px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;background:#ffffff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
+            <tr>
+              <td style="background-color:#2563eb;padding:20px;text-align:center;color:#ffffff;font-family:Segoe UI,Tahoma,Arial,sans-serif;font-size:26px;font-weight:700;">
+                Alerte de taux XChange
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:24px;font-family:Segoe UI,Tahoma,Arial,sans-serif;color:#1f2937;font-size:15px;line-height:1.6;">
+                <p style="margin:0 0 14px 0;">Bonjour {{userName}},</p>
+                <p style="margin:0 0 16px 0;">Votre alerte de taux de change vient d'être déclenchée.</p>
+
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;">
+                  <tr>
+                    <td style="padding:16px;font-family:Segoe UI,Tahoma,Arial,sans-serif;color:#1e3a8a;">
+                      <p style="margin:0 0 10px 0;font-size:18px;font-weight:700;">{{fromCurrency}} / {{toCurrency}}</p>
+                      <p style="margin:0 0 6px 0;color:#1f2937;">Taux actuel : <strong>{{currentRate}}</strong></p>
+                      <p style="margin:0;color:#1f2937;">Votre objectif : <strong>{{condition}} {{targetRate}}</strong></p>
+                    </td>
+                  </tr>
+                </table>
+
+                <p style="margin:16px 0;">C'est peut-être le bon moment pour effectuer votre transaction.</p>
+
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
+                  <tr>
+                    <td style="background:#2563eb;border-radius:6px;text-align:center;">
+                      <a href="http://localhost:3000" style="display:inline-block;padding:12px 22px;font-family:Segoe UI,Tahoma,Arial,sans-serif;font-size:14px;color:#ffffff;text-decoration:none;font-weight:600;">Aller sur XChange</a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:16px 24px;text-align:center;font-family:Segoe UI,Tahoma,Arial,sans-serif;color:#6b7280;font-size:12px;border-top:1px solid #e5e7eb;">
+                Email automatique envoyé après le déclenchement de votre alerte.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

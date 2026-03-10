@@ -1,0 +1,162 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String   @id @default(uuid())
+  email             String   @unique
+  password          String
+  name              String
+  isPremium         Boolean  @default(false)
+  stripeCustomerId  String?  @unique
+  subscriptionId    String?
+  subscriptionEnd   DateTime?
+  favoriteCurrencies String?  // JSON string array
+  isTwoFactorEnabled Boolean  @default(false)
+  twoFactorEmailCode String?
+  twoFactorEmailExpires DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  alerts            Alert[]
+  notifications     Notification[]
+  apiKeys           ApiKey[]
+  conversions       Conversion[]
+  passwordResetTokens PasswordResetToken[]
+  
+  @@map("users")
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+  type        String
+  title       String
+  message     String
+  readAt      DateTime?
+  metadata    String?
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, readAt])
+  @@map("notifications")
+}
+
+model Alert {
+  id              String   @id @default(uuid())
+  userId          String
+  fromCurrency    String
+  toCurrency      String
+  targetRate      Float
+  condition       String   // 'above' ou 'below'
+  active          Boolean  @default(true)
+  lastTriggered   DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("alerts")
+}
+
+model Conversion {
+  id          String   @id @default(uuid())
+  userId      String?
+  fromCurrency String
+  toCurrency  String
+  amount      Float
+  result      Float
+  rate        Float
+  createdAt   DateTime @default(now())
+
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("conversions")
+}
+
+model ExchangeRate {
+  id          String   @id @default(uuid())
+  base        String
+  currency    String
+  rate        Float
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@unique([base, currency, date])
+  @@index([base, currency])
+  @@map("exchange_rates")
+}
+
+model ApiKey {
+  id              String   @id @default(uuid())
+  userId          String
+  name            String
+  key             String   @unique
+  plan            String   // 'free', 'starter', 'pro', 'business'
+  requestLimit    Int      // Limite mensuelle
+  requestCount    Int      @default(0)
+  lastReset       DateTime @default(now())
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  requests        ApiRequest[]
+
+  @@index([userId])
+  @@index([key])
+  @@map("api_keys")
+}
+
+model ApiRequest {
+  id          String   @id @default(uuid())
+  apiKeyId    String
+  endpoint    String
+  method      String
+  statusCode  Int
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  apiKey      ApiKey   @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+
+  @@index([apiKeyId])
+  @@index([createdAt])
+  @@map("api_requests")
+}
+
+model WaitingList {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  @@map("waiting_list")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("password_reset_tokens")
+}
