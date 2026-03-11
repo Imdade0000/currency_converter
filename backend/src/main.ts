@@ -8,8 +8,12 @@ async function bootstrap() {
 
   // CORS
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    credentials: true,
+    origin: [
+    'http://localhost:3000',
+    'https://xchangeconverter.com',
+    'https://www.xchangeconverter.com',
+  ],
+  credentials: true,
   });
 
   // Global prefix
@@ -39,8 +43,10 @@ async function bootstrap() {
   const port = process.env.PORT || 3001;
   await app.listen(port);
 
-  console.log(`🚀 Application is running on: http://localhost:${port}`);
-  console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
+  const url = await app.getUrl();
+
+console.log(`🚀 Application is running on: ${url}`);
+console.log(`📚 API Documentation: ${url}/api/docs`);
 }
 
 bootstrap();
