@@ -6,7 +6,7 @@
     "build": "nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/src/main.js",
     "lint:fr": "node ../scripts/lint-fr-accents.mjs backend/src",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
