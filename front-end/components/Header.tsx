@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useAppStore } from '@/store/useAppStore';
 import { useI18n } from '@/i18n/I18nProvider';
 import { Lang } from '@/i18n/translations';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { getUnreadNotificationsCount } from '@/services/api';
 
 const LANGUAGE_OPTIONS: Array<{ lang: Lang; label: string }> = [
@@ -206,83 +206,77 @@ export default function Header() {
           </button>
         </div>
 
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden overflow-hidden"
-            >
-              <nav className="pt-4 pb-2 space-y-1 border-t border-slate-100 mt-4">
-                <div className="flex items-center gap-2 px-3 mb-2">
-                  {LANGUAGE_OPTIONS.map((option) => (
-                    <button
-                      key={option.lang}
-                      type="button"
-                      onClick={() => setLang(option.lang)}
-                      className={`px-2 py-1 rounded text-xs border ${lang === option.lang ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-white text-slate-600 border-slate-200'}`}
-                    >
-                      <span className="inline-flex items-center gap-1.5">
-                        <LangSwatch lang={option.lang} />
-                        {option.label}
-                      </span>
-                    </button>
-                  ))}
-                </div>
+        <div
+          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-[600px] opacity-100 mt-4' : 'max-h-0 opacity-0'
+            }`}
+        >
+          <nav className="pt-4 pb-2 space-y-1 border-t border-slate-100">
+            <div className="flex items-center gap-2 px-3 mb-2">
+              {LANGUAGE_OPTIONS.map((option) => (
+                <button
+                  key={option.lang}
+                  type="button"
+                  onClick={() => setLang(option.lang)}
+                  className={`px-2 py-1 rounded text-xs border ${lang === option.lang ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-white text-slate-600 border-slate-200'}`}
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    <LangSwatch lang={option.lang} />
+                    {option.label}
+                  </span>
+                </button>
+              ))}
+            </div>
 
-                <MobileNavLink href="/" label={t('nav.home')} onClick={() => setMobileMenuOpen(false)} />
-                <MobileNavLink href="/rates" label={t('nav.rates')} onClick={() => setMobileMenuOpen(false)} />
-                {isAuthenticated && (
-                  <>
-                    <MobileNavLink href="/dashboard" label={t('nav.dashboard')} onClick={() => setMobileMenuOpen(false)} />
-                    <MobileNavLink href="/alerts" label={t('nav.alerts')} onClick={() => setMobileMenuOpen(false)} />
-                    <MobileNavLink
-                      href="/notifications"
-                      label={`${t('nav.notifications')}${unreadNotifications > 0 ? ` (${unreadNotifications > 99 ? '99+' : unreadNotifications})` : ''}`}
-                      onClick={() => setMobileMenuOpen(false)}
-                    />
-                    <MobileNavLink href="/admin" label={t('nav.admin')} onClick={() => setMobileMenuOpen(false)} />
-                  </>
-                )}
-                <MobileNavLink href="/api-docs" label={t('nav.apiDocsMobile')} onClick={() => setMobileMenuOpen(false)} />
-                <MobileNavLink href="/premium" label={t('nav.premium')} onClick={() => setMobileMenuOpen(false)} />
+            <MobileNavLink href="/" label={t('nav.home')} onClick={() => setMobileMenuOpen(false)} />
+            <MobileNavLink href="/rates" label={t('nav.rates')} onClick={() => setMobileMenuOpen(false)} />
+            {isAuthenticated && (
+              <>
+                <MobileNavLink href="/dashboard" label={t('nav.dashboard')} onClick={() => setMobileMenuOpen(false)} />
+                <MobileNavLink href="/alerts" label={t('nav.alerts')} onClick={() => setMobileMenuOpen(false)} />
+                <MobileNavLink
+                  href="/notifications"
+                  label={`${t('nav.notifications')}${unreadNotifications > 0 ? ` (${unreadNotifications > 99 ? '99+' : unreadNotifications})` : ''}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                />
+                <MobileNavLink href="/admin" label={t('nav.admin')} onClick={() => setMobileMenuOpen(false)} />
+              </>
+            )}
+            <MobileNavLink href="/api-docs" label={t('nav.apiDocsMobile')} onClick={() => setMobileMenuOpen(false)} />
+            <MobileNavLink href="/premium" label={t('nav.premium')} onClick={() => setMobileMenuOpen(false)} />
 
-                <div className="pt-3 border-t border-slate-100 mt-2">
-                  {isAuthenticated ? (
-                    <div className="flex items-center justify-between px-3 py-2">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold text-sm">
-                          {user?.name?.charAt(0).toUpperCase()}
-                        </div>
-                        <span className="text-sm font-semibold text-slate-900">{user?.name}</span>
-                      </div>
-                      <button
-                        onClick={() => {
-                          logout();
-                          setMobileMenuOpen(false);
-                        }}
-                        className="text-sm text-red-600 font-medium"
-                      >
-                        {t('auth.logout')}
-                      </button>
+            <div className="pt-3 border-t border-slate-100 mt-2">
+              {isAuthenticated ? (
+                <div className="flex items-center justify-between px-3 py-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold text-sm">
+                      {user?.name?.charAt(0).toUpperCase()}
                     </div>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        setShowAuthModal(true);
-                        setMobileMenuOpen(false);
-                      }}
-                      className="btn-primary w-full text-sm"
-                    >
-                      {t('auth.loginSignup')}
-                    </button>
-                  )}
+                    <span className="text-sm font-semibold text-slate-900">{user?.name}</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="text-sm text-red-600 font-medium"
+                  >
+                    {t('auth.logout')}
+                  </button>
                 </div>
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              ) : (
+                <button
+                  onClick={() => {
+                    setShowAuthModal(true);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="btn-primary w-full text-sm"
+                >
+                  {t('auth.loginSignup')}
+                </button>
+              )}
+            </div>
+          </nav>
+        </div>
       </div>
     </header>
   );

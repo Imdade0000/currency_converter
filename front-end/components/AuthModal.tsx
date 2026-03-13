@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAppStore } from '@/store/useAppStore';
 import { login, register, forgotPassword, verify2Fa } from '@/services/api';
@@ -18,6 +17,8 @@ export default function AuthModal() {
   const [formData, setFormData] = useState({ email: '', password: '', name: '' });
   const [twoFactorCode, setTwoFactorCode] = useState('');
   const [userIdFor2Fa, setUserIdFor2Fa] = useState<string | null>(null);
+  const [visible, setVisible] = useState(false);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -27,9 +28,27 @@ export default function AuthModal() {
     }
   }, [router.isReady, router.query.auth, setShowAuthModal]);
 
+  // Déclencher l'animation d'entrée après le montage
+  useEffect(() => {
+    if (showAuthModal) {
+      requestAnimationFrame(() => setVisible(true));
+    } else {
+      setVisible(false);
+    }
+  }, [showAuthModal]);
+
   if (!showAuthModal) return null;
 
   const resetForm = () => setFormData({ email: '', password: '', name: '' });
+
+  const close = () => {
+    setVisible(false);
+    setTimeout(() => { setShowAuthModal(false); resetForm(); setView('login'); }, 200);
+  };
+
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === overlayRef.current) close();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +68,7 @@ export default function AuthModal() {
         setUser(data.user ?? null);
         setToken(data.token ?? null);
         toast.success(isFr ? 'Bon retour parmi nous !' : 'Welcome back!');
-        setShowAuthModal(false);
+        close();
         const next = typeof router.query.next === 'string' ? router.query.next : '/dashboard';
         router.push(next);
       } else if (view === 'verify-2fa') {
@@ -58,22 +77,22 @@ export default function AuthModal() {
         setUser(data.user);
         setToken(data.token);
         toast.success(isFr ? 'Authentification réussie !' : 'Authentication successful!');
-        setShowAuthModal(false);
+        close();
         const next = typeof router.query.next === 'string' ? router.query.next : '/dashboard';
         router.push(next);
       } else if (view === 'register') {
         const data = await register(formData.email, formData.password, formData.name);
         setUser(data.user);
         setToken(data.token);
-        toast.success(isFr ? 'Compte crée avec succès !' : 'Account created successfully!');
-        setShowAuthModal(false);
+        toast.success(isFr ? 'Compte créé avec succès !' : 'Account created successfully!');
+        close();
         const next = typeof router.query.next === 'string' ? router.query.next : '/dashboard';
         router.push(next);
       } else {
         await forgotPassword(formData.email);
         toast.success(
           isFr
-            ? 'Si un compte existe avec cet email, un lien de réinitialisation a été envoye.'
+            ? 'Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.'
             : 'If an account exists for this email, a reset link has been sent.',
         );
         resetForm();
@@ -95,18 +114,30 @@ export default function AuthModal() {
         : (isFr ? 'Mot de passe oublié' : 'Forgot password');
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-      <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+    <div
+      ref={overlayRef}
+      onClick={handleOverlayClick}
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+      style={{ transition: 'opacity 0.2s', opacity: visible ? 1 : 0 }}
+    >
+      <div
+        className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden"
+        style={{
+          transition: 'opacity 0.2s, transform 0.2s',
+          opacity: visible ? 1 : 0,
+          transform: visible ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(16px)',
+        }}
+      >
         <div className="p-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-display font-bold gradient-text">{title}</h2>
-            <button onClick={() => { setShowAuthModal(false); resetForm(); setView('login'); }} className="text-slate-400 hover:text-slate-600 transition-colors">✕</button>
+            <button onClick={close} className="text-slate-400 hover:text-slate-600 transition-colors">✕</button>
           </div>
 
           {view === 'forgot-password' && (
             <p className="text-sm text-slate-500 mb-4">
               {isFr
-                ? 'Entrez votre adresse email. Si un compte existe, vous recevrez un lien de réinitialisation.'
+                ? "Entrez votre adresse email. Si un compte existe, vous recevrez un lien de réinitialisation."
                 : 'Enter your email address. If an account exists, you will receive a reset link.'}
             </p>
           )}
@@ -118,15 +149,22 @@ export default function AuthModal() {
                 <input type="text" required className="input-field" placeholder="John Doe" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
               </div>
             )}
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Email</label>
-              <input type="email" required className="input-field" placeholder="john@example.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
-            </div>
-            {view !== 'forgot-password' && (
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">{isFr ? 'Mot de passe' : 'Password'}</label>
-                <input type="password" required className="input-field" placeholder="********" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
-              </div>
+
+            {view !== 'verify-2fa' && (
+              <>
+                {(view === 'login' || view === 'register' || view === 'forgot-password') && (
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">Email</label>
+                    <input type="email" required className="input-field" placeholder="john@example.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
+                  </div>
+                )}
+                {view !== 'forgot-password' && (
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">{isFr ? 'Mot de passe' : 'Password'}</label>
+                    <input type="password" required className="input-field" placeholder="********" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
+                  </div>
+                )}
+              </>
             )}
 
             {view === 'verify-2fa' && (
@@ -142,6 +180,7 @@ export default function AuthModal() {
                   placeholder="123456"
                   value={twoFactorCode}
                   onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, ''))}
+                  autoFocus
                 />
                 <p className="text-xs text-slate-500 mt-2">
                   {isFr
@@ -154,7 +193,7 @@ export default function AuthModal() {
             {view === 'login' && (
               <div className="text-right -mt-1">
                 <button type="button" onClick={() => { resetForm(); setView('forgot-password'); }} className="text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors">
-                  {isFr ? 'Mot de passe oublie ?' : 'Forgot password?'}
+                  {isFr ? 'Mot de passe oublié ?' : 'Forgot password?'}
                 </button>
               </div>
             )}
@@ -173,12 +212,24 @@ export default function AuthModal() {
           </form>
 
           <div className="mt-6 text-center space-y-2">
-            {view === 'login' && <button onClick={() => { resetForm(); setView('register'); }} className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">{isFr ? "Pas encore de compte ? S'inscrire" : "No account yet? Sign up"}</button>}
-            {view === 'register' && <button onClick={() => { resetForm(); setView('login'); }} className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">{isFr ? 'Deja un compte ? Se connecter' : 'Already have an account? Sign in'}</button>}
-            {view === 'forgot-password' && <button onClick={() => { resetForm(); setView('login'); }} className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">{isFr ? 'Retour a la connexion' : 'Back to sign in'}</button>}
+            {view === 'login' && (
+              <button onClick={() => { resetForm(); setView('register'); }} className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+                {isFr ? "Pas encore de compte ? S'inscrire" : "No account yet? Sign up"}
+              </button>
+            )}
+            {view === 'register' && (
+              <button onClick={() => { resetForm(); setView('login'); }} className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+                {isFr ? 'Déjà un compte ? Se connecter' : 'Already have an account? Sign in'}
+              </button>
+            )}
+            {(view === 'forgot-password' || view === 'verify-2fa') && (
+              <button onClick={() => { resetForm(); setTwoFactorCode(''); setView('login'); }} className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+                {isFr ? 'Retour à la connexion' : 'Back to sign in'}
+              </button>
+            )}
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
