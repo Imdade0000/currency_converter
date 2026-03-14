@@ -76,4 +76,10 @@ export class ApiKeysService {
             },
         });
     }
+
+    async resetAllRequestCounts() {
+        return this.prisma.apiKey.updateMany({
+            data: { requestCount: 0 },
+        });
+    }
 }

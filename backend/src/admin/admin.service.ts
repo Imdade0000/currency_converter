@@ -17,31 +17,34 @@ type TopApiUser = {
 
 @Injectable()
 export class AdminService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async getSystemStats() {
     const now = new Date();
     const windowDays = 30;
     const startDate = this.startOfDayUtc(new Date(now.getTime() - (windowDays - 1) * 24 * 60 * 60 * 1000));
 
+    // Groupe 1 : comptages simples et rapides
     const [
       totalUsers,
       premiumUsers,
       newUsersLast30Days,
       totalApiKeys,
       totalActiveApiKeys,
-      totalApiRequestsLast30Days,
-      activeUsersLast30Days,
-      usersCreated,
-      apiRequests,
-      conversions,
-      alerts,
     ] = await Promise.all([
       this.prisma.user.count(),
       this.prisma.user.count({ where: { isPremium: true } }),
       this.prisma.user.count({ where: { createdAt: { gte: startDate } } }),
       this.prisma.apiKey.count(),
       this.prisma.apiKey.count({ where: { active: true } }),
+    ]);
+
+    // Groupe 2 : requêtes de taille moyenne
+    const [
+      totalApiRequestsLast30Days,
+      activeUsersLast30Days,
+      usersCreated,
+    ] = await Promise.all([
       this.prisma.apiRequest.count({ where: { createdAt: { gte: startDate } } }),
       this.prisma.user.count({
         where: {
@@ -56,6 +59,14 @@ export class AdminService {
         where: { createdAt: { gte: startDate } },
         select: { createdAt: true },
       }),
+    ]);
+
+    // Groupe 3 : requêtes plus volumineuses pour les classements et séries temporelles
+    const [
+      apiRequests,
+      conversions,
+      alerts,
+    ] = await Promise.all([
       this.prisma.apiRequest.findMany({
         where: { createdAt: { gte: startDate } },
         select: {

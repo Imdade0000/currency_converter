@@ -1,12 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { RatesService } from './rates.service';
+import { ApiKeysService } from '../api-keys/api-keys.service';
 
 @Injectable()
 export class RatesCron {
     private readonly logger = new Logger(RatesCron.name);
 
-    constructor(private ratesService: RatesService) { }
+    constructor(
+        private ratesService: RatesService,
+        private apiKeysService: ApiKeysService,
+    ) { }
 
     @Cron(CronExpression.EVERY_6_HOURS)
     async updateRates() {
@@ -31,5 +35,16 @@ export class RatesCron {
         }
 
         this.logger.log('Mise a jour automatique des taux terminee');
+    }
+
+    @Cron('0 0 1 * *') // 1er du mois à minuit
+    async resetMonthlyQuotas() {
+        this.logger.log('Debut de la reinitialisation mensuelle des quotas API...');
+        try {
+            await this.apiKeysService.resetAllRequestCounts();
+            this.logger.log('Quotas API reinitialises avec succes.');
+        } catch (error) {
+            this.logger.error(`Erreur lors de la reinitialisation des quotas API: ${error.message}`);
+        }
     }
 }
