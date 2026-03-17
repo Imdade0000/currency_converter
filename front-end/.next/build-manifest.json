@@ -5,8 +5,8 @@
   "devFiles": [],
   "ampDevFiles": [],
   "lowPriorityFiles": [
-    "static/JslkC3EtEJJqdgLlYzoGY/_buildManifest.js",
-    "static/JslkC3EtEJJqdgLlYzoGY/_ssgManifest.js"
+    "static/1xpcgCPKvDknjPK7EmANK/_buildManifest.js",
+    "static/1xpcgCPKvDknjPK7EmANK/_ssgManifest.js"
   ],
   "rootMainFiles": [],
   "pages": {
@@ -14,14 +14,14 @@
       "static/chunks/webpack-38cee4c0e358b1a3.js",
       "static/chunks/framework-64ad27b21261a9ce.js",
       "static/chunks/main-4b423ec82b590a3f.js",
-      "static/chunks/pages/index-5b824e262cae50ed.js"
+      "static/chunks/pages/index-e2f57c5028bf2f65.js"
     ],
     "/_app": [
       "static/chunks/webpack-38cee4c0e358b1a3.js",
       "static/chunks/framework-64ad27b21261a9ce.js",
       "static/chunks/main-4b423ec82b590a3f.js",
-      "static/css/3d43b56ee3a2fec6.css",
-      "static/chunks/pages/_app-7ece016646716367.js"
+      "static/css/78db23e023d143fb.css",
+      "static/chunks/pages/_app-d7d26783cc5f81e4.js"
     ],
     "/_error": [
       "static/chunks/webpack-38cee4c0e358b1a3.js",
@@ -40,7 +40,7 @@
       "static/chunks/webpack-38cee4c0e358b1a3.js",
       "static/chunks/framework-64ad27b21261a9ce.js",
       "static/chunks/main-4b423ec82b590a3f.js",
-      "static/chunks/pages/alerts-361784638435299b.js"
+      "static/chunks/pages/alerts-0cc1db47f3b4f0ab.js"
     ],
     "/api-docs": [
       "static/chunks/webpack-38cee4c0e358b1a3.js",
@@ -77,7 +77,7 @@
       "static/chunks/webpack-38cee4c0e358b1a3.js",
       "static/chunks/framework-64ad27b21261a9ce.js",
       "static/chunks/main-4b423ec82b590a3f.js",
-      "static/chunks/pages/dashboard-ac5d7922852deedd.js"
+      "static/chunks/pages/dashboard-a8a9363e250c47cc.js"
     ],
     "/faq": [
       "static/chunks/webpack-38cee4c0e358b1a3.js",
@@ -107,7 +107,7 @@
       "static/chunks/webpack-38cee4c0e358b1a3.js",
       "static/chunks/framework-64ad27b21261a9ce.js",
       "static/chunks/main-4b423ec82b590a3f.js",
-      "static/chunks/pages/rates-2aefa0398f7ec5b6.js"
+      "static/chunks/pages/rates-8f0378511b4d1d4f.js"
     ],
     "/reset-password": [
       "static/chunks/webpack-38cee4c0e358b1a3.js",

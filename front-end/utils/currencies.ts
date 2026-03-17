@@ -53,3 +53,22 @@ export const formatAmount = (amount: number, currencyCode: string): string => {
     maximumFractionDigits: 2,
   }).format(amount) + ' ' + (currency?.symbol || currencyCode);
 };
+
+export const CURRENCY_NAMES: Record<string, { fr: string, en: string }> = {
+  USD: { fr: 'Dollar Américain', en: 'US Dollar' },
+  EUR: { fr: 'Euro', en: 'Euro' },
+  GBP: { fr: 'Livre Sterling', en: 'British Pound' },
+  XOF: { fr: 'Franc CFA (BCEAO)', en: 'CFA Franc (BCEAO)' },
+  XAF: { fr: 'Franc CFA (BEAC)', en: 'CFA Franc (BEAC)' },
+  NGN: { fr: 'Naira Nigérian', en: 'Nigerian Naira' },
+  GHS: { fr: 'Cedi Ghanéen', en: 'Ghanaian Cedi' },
+  JPY: { fr: 'Yen Japonais', en: 'Japanese Yen' },
+  CNY: { fr: 'Yuan Chinois', en: 'Chinese Yuan' },
+  CAD: { fr: 'Dollar Canadien', en: 'Canadian Dollar' },
+};
+
+export const getCurrencyName = (code: string, isFr: boolean) => {
+  const nameObj = CURRENCY_NAMES[code];
+  if (!nameObj) return code;
+  return `${code} - ${isFr ? nameObj.fr : nameObj.en}`;
+};

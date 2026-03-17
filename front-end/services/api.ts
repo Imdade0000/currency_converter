@@ -253,6 +253,11 @@ export const updateFavoriteCurrencies = async (currencies: string[]): Promise<Us
   return response.data;
 };
 
+export const getUserStats = async (): Promise<{ totalConversions: number, totalAlerts: number, totalApiKeys: number }> => {
+  const response = await apiClient.get('/users/stats');
+  return response.data;
+};
+
 // Abonnement Premium (Phase 2)
 export const createCheckoutSession = async (): Promise<{ sessionId: string; url: string }> => {
   const response = await apiClient.post('/subscription/create-checkout');

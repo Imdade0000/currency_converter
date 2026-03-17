@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { getExchangeRates, getSupportedCurrencies } from '@/services/api';
 import { motion } from 'framer-motion';
 import { useI18n } from '@/i18n/I18nProvider';
+import { getCurrencyName } from '@/utils/currencies';
 
 export default function RatesPage() {
   const { lang, t } = useI18n();
@@ -55,7 +56,7 @@ export default function RatesPage() {
             <div className="w-full sm:w-40">
               <label className="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">{t('rates.baseCurrency')}</label>
               <select className="input-field" value={base} onChange={e => setBase(e.target.value)}>
-                {currencies.slice(0, 30).map(c => <option key={c} value={c}>{c}</option>)}
+                {currencies.slice(0, 30).map(c => <option key={c} value={c}>{getCurrencyName(c, isFr)}</option>)}
               </select>
             </div>
           </div>
@@ -81,7 +82,7 @@ export default function RatesPage() {
               <motion.div key={currency} whileHover={{ scale: 1.02 }} className="card p-5 bg-white flex justify-between items-center group cursor-default">
                 <div>
                   <span className="text-xs font-bold text-slate-400 uppercase block mb-1">1 {base} =</span>
-                  <span className="text-lg font-bold text-slate-900">{currency}</span>
+                  <span className="text-sm font-bold text-slate-900">{getCurrencyName(currency, isFr)}</span>
                 </div>
                 <div className="text-xl font-display font-bold text-blue-600">{rate.toLocaleString(isFr ? 'fr-FR' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 5 })}</div>
               </motion.div>

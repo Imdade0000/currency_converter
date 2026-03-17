@@ -1,7 +1,7 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import Head from 'next/head';
 import { useAuth } from '@/hooks/useAuth';
-import { getApiKeys, generateApiKey, ApiKey, toggle2Fa } from '@/services/api';
+import { getApiKeys, generateApiKey, ApiKey, toggle2Fa, getUserStats } from '@/services/api';
 import ConversionHistory from '@/components/ConversionHistory';
 import toast from 'react-hot-toast';
 import { useI18n } from '@/i18n/I18nProvider';
@@ -11,12 +11,22 @@ export default function DashboardPage() {
   const isFr = lang === 'fr';
   const { user, loading, setUser } = useAuth();
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
-  const [stats] = useState({ totalConversions: 12, totalAlerts: 2, totalApiKeys: 0 });
+  const [stats, setStats] = useState({ totalConversions: 0, totalAlerts: 0, totalApiKeys: 0 });
   const [toggling2Fa, setToggling2Fa] = useState(false);
 
   useEffect(() => {
-    if (user) fetchApiKeys();
+    if (user) {
+      fetchApiKeys();
+      fetchStats();
+    }
   }, [user]);
+
+  const fetchStats = async () => {
+    try {
+      const data = await getUserStats();
+      setStats(data);
+    } catch { }
+  };
 
   const fetchApiKeys = async () => {
     try {

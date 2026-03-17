@@ -6,6 +6,7 @@ import { getUserAlerts, createAlert, Alert, getSupportedCurrencies } from '@/ser
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { useI18n } from '@/i18n/I18nProvider';
+import { getCurrencyName } from '@/utils/currencies';
 
 type AlertFormState = { fromCurrency: string; toCurrency: string; targetRate: string; condition: 'above' | 'below' };
 
@@ -71,11 +72,18 @@ export default function AlertsPage() {
 
       {showForm && (
         <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="card mb-12 bg-blue-50 border-blue-100 overflow-hidden">
-          <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-4 gap-4 p-2">
-            <div><label className="block text-xs font-bold uppercase text-slate-500 mb-1">{isFr ? 'De' : 'From'}</label><select className="input-field" value={formData.fromCurrency} onChange={e => setFormData({ ...formData, fromCurrency: e.target.value })}>{currencies.map((currency) => <option key={currency} value={currency}>{currency}</option>)}</select></div>
-            <div><label className="block text-xs font-bold uppercase text-slate-500 mb-1">{isFr ? 'Vers' : 'To'}</label><select className="input-field" value={formData.toCurrency} onChange={e => setFormData({ ...formData, toCurrency: e.target.value })}>{currencies.map((currency) => <option key={currency} value={currency}>{currency}</option>)}</select></div>
+          <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-5 gap-4 p-2">
+            <div><label className="block text-xs font-bold uppercase text-slate-500 mb-1">{isFr ? 'De' : 'From'}</label><select className="input-field" value={formData.fromCurrency} onChange={e => setFormData({ ...formData, fromCurrency: e.target.value })}>{currencies.map((currency) => <option key={currency} value={currency}>{getCurrencyName(currency, isFr)}</option>)}</select></div>
+            <div><label className="block text-xs font-bold uppercase text-slate-500 mb-1">{isFr ? 'Vers' : 'To'}</label><select className="input-field" value={formData.toCurrency} onChange={e => setFormData({ ...formData, toCurrency: e.target.value })}>{currencies.map((currency) => <option key={currency} value={currency}>{getCurrencyName(currency, isFr)}</option>)}</select></div>
             <div><label className="block text-xs font-bold uppercase text-slate-500 mb-1">{isFr ? 'Taux cible' : 'Target rate'}</label><input type="number" step="0.0001" className="input-field" value={formData.targetRate} onChange={e => setFormData({ ...formData, targetRate: e.target.value })} placeholder="ex: 0.95" required /></div>
-            <div className="flex items-end"><button type="submit" className="btn-primary w-full">{isFr ? "Créer l'alerte" : 'Create alert'}</button></div>
+            <div>
+              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">{isFr ? 'Condition' : 'Condition'}</label>
+              <select className="input-field" value={formData.condition} onChange={e => setFormData({ ...formData, condition: e.target.value as 'above' | 'below' })}>
+                <option value="above">{isFr ? 'Supérieur à (>)' : 'Above (>)'}</option>
+                <option value="below">{isFr ? 'Inférieur à (<)' : 'Below (<)'}</option>
+              </select>
+            </div>
+            <div className="flex items-end"><button type="submit" className="btn-primary w-full px-2">{isFr ? "Créer l'alerte" : 'Create alert'}</button></div>
           </form>
         </motion.div>
       )}

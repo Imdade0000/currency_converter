@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Alert, deleteAlert, toggleAlert } from '@/services/api';
 import toast from 'react-hot-toast';
 import { useI18n } from '@/i18n/I18nProvider';
+import { getCurrencyName } from '@/utils/currencies';
 
 interface AlertCardProps {
   alert: Alert;
@@ -38,10 +39,10 @@ export default function AlertCard({ alert, onRefresh }: AlertCardProps) {
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`card border-l-4 ${alert.active ? 'border-l-blue-500' : 'border-l-slate-300'}`}>
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <div className="flex items-center space-x-2 mb-1">
-            <span className="text-xl font-bold">{alert.fromCurrency}</span>
-            <span className="text-slate-400">→</span>
-            <span className="text-xl font-bold">{alert.toCurrency}</span>
+          <div className="flex flex-col md:flex-row md:items-center space-y-1 md:space-y-0 md:space-x-2 mb-1">
+            <span className="text-lg font-bold">{getCurrencyName(alert.fromCurrency, isFr)}</span>
+            <span className="text-slate-400 hidden md:inline">→</span>
+            <span className="text-lg font-bold">{getCurrencyName(alert.toCurrency, isFr)}</span>
           </div>
           <p className="text-slate-600">
             {isFr ? 'Alerte si le taux passe' : 'Alert when rate goes'}
