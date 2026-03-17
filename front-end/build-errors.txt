@@ -1,5 +1,0 @@
-﻿components/ConversionHistory.tsx(3,10): error TS2305: Module '"@/utils/currencies"' has no exported member 'formatAmount'.
-components/CurrencyConverter.tsx(3,10): error TS2305: Module '"@/utils/currencies"' has no exported member 'currencies'.
-components/CurrencyConverter.tsx(3,22): error TS2305: Module '"@/utils/currencies"' has no exported member 'formatAmount'.
-components/CurrencyConverter.tsx(87,32): error TS7006: Parameter 'currency' implicitly has an 'any' type.
-components/CurrencyConverter.tsx(103,32): error TS7006: Parameter 'currency' implicitly has an 'any' type.
