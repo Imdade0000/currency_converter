@@ -61,7 +61,10 @@ export class AlertsService {
     async markAsTriggered(id: string) {
         return this.prisma.alert.update({
             where: { id },
-            data: { lastTriggered: new Date() },
+            data: { 
+                lastTriggered: new Date(),
+                active: false // Option 1 : Désactive l'alerte après le premier envoi
+            },
         });
     }
 }
