@@ -2,8 +2,6 @@ node_modules/
 **/node_modules/
 
 # Environment files (never commit secrets)
-.env
-.env.*
 *.env
 *.env.local
 backend/.env
@@ -23,3 +21,4 @@ backend/src/**/*.d.ts
 *.key
 *.crt
 *.p12
+config.bat
