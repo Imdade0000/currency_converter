@@ -15,9 +15,9 @@ export default function Home() {
         <meta name="description" content={isFr ? 'Convertissez vos devises instantanement au meilleur taux.' : 'Convert your currencies instantly at the best rate.'} />
       </Head>
 
-      <section 
+      <section
         className="pt-24 pb-32 text-white overflow-hidden relative bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/images/finance_hero_bg.png')" }}
+        style={{ backgroundImage: "url('/images/exchange_picture2.jpg')" }}
       >
         {/* Overlay pour assombrir l'image et faire ressortir le texte (Glassmorphism) */}
         <div className="absolute inset-0 bg-slate-900/85 backdrop-blur-[4px] z-0"></div>
@@ -46,7 +46,7 @@ export default function Home() {
         {/* Subtle background blobs for depth */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-200/40 rounded-full filter blur-[100px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-200/30 rounded-full filter blur-[100px] pointer-events-none" />
-        
+
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
             <div className="lg:col-span-2">
@@ -77,7 +77,7 @@ export default function Home() {
       <section className="py-24 relative bg-[#0B1120] text-white overflow-hidden">
         {/* Glowing background effect */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-600/20 rounded-full filter blur-[150px] pointer-events-none z-0" />
-        
+
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">{isFr ? 'Espace développeurs' : 'Developers area'}</h2>
