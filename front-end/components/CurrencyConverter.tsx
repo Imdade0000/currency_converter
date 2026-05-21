@@ -1,6 +1,6 @@
-﻿import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { currencies, formatAmount } from '@/utils/currencies';
+import { currencies, formatAmount, getCurrencyByCode } from '@/utils/currencies';
 import { convertCurrency } from '@/services/api';
 import { useAppStore } from '@/store/useAppStore';
 import toast from 'react-hot-toast';
@@ -19,6 +19,8 @@ export default function CurrencyConverter() {
   const isFirstMount = useRef(true);
 
   const addToHistory = useAppStore((state) => state.addToHistory);
+  const fromCurrencyData = getCurrencyByCode(fromCurrency);
+  const toCurrencyData = getCurrencyByCode(toCurrency);
 
   const handleConvert = async () => {
     if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
@@ -45,18 +47,21 @@ export default function CurrencyConverter() {
 
       toast.success(isFr ? 'Conversion réussie !' : 'Conversion successful!');
     } catch {
-      toast.error(isFr ? 'Erreur lors de la conversion. Veuillez reessayer.' : 'Conversion failed. Please try again.');
+      toast.error(isFr ? 'Erreur lors de la conversion. Veuillez réessayer.' : 'Conversion failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleSwapCurrencies = () => {
+    const previousAmount = amount;
+    const previousResult = result;
+
     setFromCurrency(toCurrency);
     setToCurrency(fromCurrency);
-    if (result) {
-      setAmount(result.toString());
-      setResult(parseFloat(amount));
+    if (previousResult !== null) {
+      setAmount(previousResult.toString());
+      setResult(previousAmount ? parseFloat(previousAmount) : null);
     }
   };
 
@@ -72,59 +77,180 @@ export default function CurrencyConverter() {
   }, [fromCurrency, toCurrency]);
 
   return (
-    <div className="card max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h2 className="text-3xl font-display font-bold gradient-text mb-2">{isFr ? 'Convertisseur de devises' : 'Currency converter'}</h2>
-        <p className="text-slate-600">{isFr ? 'Convertissez rapidement entre plus de 30 devises mondiales' : 'Convert quickly between more than 30 world currencies'}</p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">{isFr ? 'Montant a convertir' : 'Amount to convert'}</label>
-          <div className="space-y-3">
-            <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={isFr ? 'Entrez le montant' : 'Enter amount'} className="input-field text-2xl font-bold" min="0" step="0.01" />
-            <select value={fromCurrency} onChange={(e) => setFromCurrency(e.target.value)} className="input-field">
-              {currencies.map((currency) => (
-                <option key={currency.code} value={currency.code}>{currency.code} - {currency.name}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-center md:col-span-2 -my-3">
-          <motion.button whileHover={{ scale: 1.1, rotate: 180 }} whileTap={{ scale: 0.9 }} onClick={handleSwapCurrencies} className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow">⇅</motion.button>
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">{isFr ? 'Montant converti' : 'Converted amount'}</label>
-          <div className="space-y-3">
-            <div className="input-field text-2xl font-bold bg-slate-50">{loading ? (isFr ? 'Calcul...' : 'Calculating...') : result !== null ? formatAmount(result, toCurrency) : <span className="text-slate-400">0.00</span>}</div>
-            <select value={toCurrency} onChange={(e) => setToCurrency(e.target.value)} className="input-field">
-              {currencies.map((currency) => (
-                <option key={currency.code} value={currency.code}>{currency.code} - {currency.name}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <AnimatePresence>
-        {rate && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600 mb-1">{isFr ? 'Taux de change' : 'Exchange rate'}</p>
-                <p className="text-lg font-bold text-slate-900">1 {fromCurrency} = {rate.toFixed(4)} {toCurrency}</p>
-              </div>
-              {lastUpdate && <div className="text-right"><p className="text-xs text-slate-500">{isFr ? 'Mis à jour' : 'Updated'}</p><p className="text-xs text-slate-600">{lastUpdate}</p></div>}
+    <div className="surface-panel max-w-4xl mx-auto overflow-hidden">
+      <div className="border-b border-slate-100 bg-white/80 px-5 py-5 sm:px-7">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-emerald-700">
+              <span className="h-2 w-2 rounded-full bg-emerald-500" />
+              {isFr ? 'Taux en direct' : 'Live rates'}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <h2 className="text-2xl font-display font-bold text-slate-950 sm:text-3xl">
+              {isFr ? 'Convertisseur de devises' : 'Currency converter'}
+            </h2>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-slate-600">
+              {isFr
+                ? 'Comparez vos devises clés en quelques secondes, avec un résultat lisible et prêt à utiliser.'
+                : 'Compare key currencies in seconds, with a clear result ready to use.'}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+            <p className="font-semibold text-slate-900">{isFr ? 'Paire active' : 'Active pair'}</p>
+            <p className="mt-1 font-mono text-blue-700">{fromCurrency}/{toCurrency}</p>
+          </div>
+        </div>
+      </div>
 
-      <button onClick={handleConvert} disabled={loading} className="btn-primary w-full mt-6 disabled:opacity-50 disabled:cursor-not-allowed">
-        {loading ? (isFr ? 'Conversion en cours...' : 'Converting...') : (isFr ? 'Convertir' : 'Convert')}
-      </button>
+      <div className="p-5 sm:p-7">
+        <div className="grid grid-cols-1 items-end gap-4 lg:grid-cols-[1fr_auto_1fr]">
+          <CurrencyPanel
+            label={isFr ? 'Vous envoyez' : 'You send'}
+            amountLabel={isFr ? 'Montant à convertir' : 'Amount to convert'}
+            amount={amount}
+            onAmountChange={setAmount}
+            currency={fromCurrency}
+            onCurrencyChange={setFromCurrency}
+            placeholder={isFr ? 'Entrez le montant' : 'Enter amount'}
+            symbol={fromCurrencyData?.symbol || fromCurrency}
+            currencyLabel={isFr ? 'Devise source' : 'Source currency'}
+            editable
+          />
+
+          <div className="flex justify-center lg:pb-8">
+            <motion.button
+              type="button"
+              whileHover={{ scale: 1.06 }}
+              whileTap={{ scale: 0.94 }}
+              onClick={handleSwapCurrencies}
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-blue-100 bg-white text-blue-700 shadow-md transition-colors hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-100"
+              aria-label={isFr ? 'Inverser les devises' : 'Swap currencies'}
+            >
+              <SwapIcon />
+            </motion.button>
+          </div>
+
+          <CurrencyPanel
+            label={isFr ? 'Vous recevez' : 'You receive'}
+            amountLabel={isFr ? 'Montant converti' : 'Converted amount'}
+            amount={loading ? (isFr ? 'Calcul...' : 'Calculating...') : result !== null ? formatAmount(result, toCurrency) : '0.00'}
+            currency={toCurrency}
+            onCurrencyChange={setToCurrency}
+            symbol={toCurrencyData?.symbol || toCurrency}
+            currencyLabel={isFr ? 'Devise cible' : 'Target currency'}
+            editable={false}
+            highlighted
+          />
+        </div>
+
+        <AnimatePresence>
+          {rate && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="mt-5 rounded-2xl border border-cyan-100 bg-cyan-50/70 p-4"
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-700">
+                    {isFr ? 'Taux de change' : 'Exchange rate'}
+                  </p>
+                  <p className="mt-1 text-lg font-bold text-slate-950">
+                    1 {fromCurrency} = {rate.toFixed(4)} {toCurrency}
+                  </p>
+                </div>
+                {lastUpdate && (
+                  <div className="rounded-xl bg-white px-3 py-2 text-left shadow-sm sm:text-right">
+                    <p className="text-xs text-slate-500">{isFr ? 'Mis à jour' : 'Updated'}</p>
+                    <p className="text-xs font-semibold text-slate-700">{lastUpdate}</p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <button onClick={handleConvert} disabled={loading} className="btn-primary mt-6 w-full disabled:cursor-not-allowed disabled:opacity-60">
+          {loading ? (isFr ? 'Conversion en cours...' : 'Converting...') : (isFr ? 'Convertir maintenant' : 'Convert now')}
+        </button>
+      </div>
     </div>
+  );
+}
+
+interface CurrencyPanelProps {
+  label: string;
+  amountLabel: string;
+  amount: string;
+  currency: string;
+  onCurrencyChange: (value: string) => void;
+  symbol: string;
+  currencyLabel: string;
+  editable: boolean;
+  highlighted?: boolean;
+  placeholder?: string;
+  onAmountChange?: (value: string) => void;
+}
+
+function CurrencyPanel({
+  label,
+  amountLabel,
+  amount,
+  currency,
+  onCurrencyChange,
+  symbol,
+  currencyLabel,
+  editable,
+  highlighted = false,
+  placeholder,
+  onAmountChange,
+}: CurrencyPanelProps) {
+  return (
+    <div className={`rounded-2xl border p-4 sm:p-5 ${highlighted ? 'border-emerald-200 bg-emerald-50/70' : 'border-slate-200 bg-slate-50/80'}`}>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <span className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{label}</span>
+        <span className={`rounded-full px-3 py-1 text-sm font-bold ${highlighted ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>
+          {currency}
+        </span>
+      </div>
+
+      <label className="mb-2 block text-sm font-semibold text-slate-700">{amountLabel}</label>
+      <div className="relative">
+        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">
+          {symbol}
+        </span>
+        {editable ? (
+          <input
+            type="number"
+            value={amount}
+            onChange={(event) => onAmountChange?.(event.target.value)}
+            placeholder={placeholder}
+            className="input-field h-14 pl-14 text-xl font-bold sm:text-2xl"
+            min="0"
+            step="0.01"
+          />
+        ) : (
+          <div className="flex h-14 items-center rounded-xl border border-emerald-200 bg-white px-4 pl-14 text-xl font-bold text-slate-950 shadow-sm sm:text-2xl">
+            <span className="truncate">{amount}</span>
+          </div>
+        )}
+      </div>
+
+      <label className="mb-2 mt-4 block text-sm font-semibold text-slate-700">{currencyLabel}</label>
+      <select value={currency} onChange={(event) => onCurrencyChange(event.target.value)} className="input-field">
+        {currencies.map((item) => (
+          <option key={item.code} value={item.code}>{item.code} - {item.name}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function SwapIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h11m0 0-3-3m3 3-3 3" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M17 17H6m0 0 3 3m-3-3 3-3" />
+    </svg>
   );
 }

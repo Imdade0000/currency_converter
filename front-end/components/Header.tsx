@@ -46,88 +46,64 @@ export default function Header() {
     };
   }, [isAuthenticated]);
 
+  const navLinks = [
+    { href: '/', label: t('nav.home'), show: true },
+    { href: '/rates', label: t('nav.rates'), show: true },
+    { href: '/dashboard', label: t('nav.dashboard'), show: isAuthenticated },
+    { href: '/alerts', label: t('nav.alerts'), show: isAuthenticated },
+    { href: '/notifications', label: t('nav.notifications'), show: isAuthenticated, badge: unreadNotifications },
+    { href: '/admin', label: t('nav.admin'), show: isAuthenticated },
+    { href: '/api-docs', label: t('nav.apiDocs'), show: true },
+  ].filter((item) => item.show);
+
   return (
-    <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between gap-4">
-          <Link href="/" className="flex items-center space-x-3 group">
+    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+      <div className="container mx-auto px-4">
+        <div className="flex h-20 items-center justify-between gap-4">
+          <Link href="/" className="flex items-center gap-3 group">
             <motion.div
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.6 }}
-              className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg"
+              whileHover={{ rotate: 8, scale: 1.04 }}
+              transition={{ duration: 0.2 }}
+              className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-ink text-white shadow-lg shadow-slate-900/15"
             >
-              <svg
-                className="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+              <LogoMark />
             </motion.div>
             <div>
-              <h1 className="text-xl font-display font-bold gradient-text group-hover:scale-105 transition-transform">
+              <h1 className="text-xl font-display font-bold tracking-tight text-slate-950 group-hover:text-blue-700 transition-colors">
                 XChange
               </h1>
-              <p className="text-xs text-slate-500">{t('app.tagline')}</p>
+              <p className="text-xs font-medium text-slate-500">{t('app.tagline')}</p>
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
-              {t('nav.home')}
-            </Link>
-            <Link href="/rates" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
-              {t('nav.rates')}
-            </Link>
-            {isAuthenticated && (
-              <>
-                <Link href="/dashboard" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
-                  {t('nav.dashboard')}
-                </Link>
-                <Link href="/alerts" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
-                  {t('nav.alerts')}
-                </Link>
-                <Link href="/notifications" className="text-slate-700 hover:text-blue-600 font-medium transition-colors inline-flex items-center gap-2">
-                  {t('nav.notifications')}
-                  {unreadNotifications > 0 && (
-                    <span className="min-w-5 h-5 px-1 rounded-full bg-red-500 text-white text-[11px] font-bold flex items-center justify-center">
-                      {unreadNotifications > 99 ? '99+' : unreadNotifications}
-                    </span>
-                  )}
-                </Link>
-                <Link href="/admin" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
-                  {t('nav.admin')}
-                </Link>
-              </>
-            )}
-            <Link href="/api-docs" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
-              {t('nav.apiDocs')}
-            </Link>
+          <nav className="hidden items-center gap-1 rounded-full border border-slate-200 bg-slate-50 p-1 md:flex">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="relative inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-white hover:text-blue-700 hover:shadow-sm"
+              >
+                {link.label}
+                {!!link.badge && link.badge > 0 && <NotificationBadge count={link.badge} />}
+              </Link>
+            ))}
           </nav>
 
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden items-center gap-3 md:flex">
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setLanguageMenuOpen((open) => !open)}
-                className="flex items-center gap-2 rounded-lg border border-slate-200 px-2.5 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors"
+                className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-blue-100"
                 aria-label="language selector"
               >
                 <LangSwatch lang={currentLanguage.lang} />
-                <span className="text-xs font-semibold">{currentLanguage.label}</span>
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                <span>{currentLanguage.label}</span>
+                <ChevronDownIcon />
               </button>
 
               {languageMenuOpen && (
-                <div className="absolute right-0 mt-2 w-24 rounded-lg border border-slate-200 bg-white shadow-lg p-1 z-50">
+                <div className="absolute right-0 z-50 mt-2 w-28 rounded-xl border border-slate-200 bg-white p-1 shadow-xl">
                   {LANGUAGE_OPTIONS.map((option) => (
                     <button
                       key={option.lang}
@@ -136,7 +112,7 @@ export default function Header() {
                         setLang(option.lang);
                         setLanguageMenuOpen(false);
                       }}
-                      className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-sm ${lang === option.lang ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50'}`}
+                      className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm ${lang === option.lang ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50'}`}
                     >
                       <LangSwatch lang={option.lang} />
                       <span>{option.label}</span>
@@ -148,42 +124,29 @@ export default function Header() {
 
             {isAuthenticated ? (
               <>
-                <div className="flex items-center space-x-3">
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-slate-900">{user?.name}</p>
-                    {user?.isPremium && (
-                      <span className="text-xs bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-0.5 rounded-full font-semibold">
-                        {t('nav.premium')}
-                      </span>
-                    )}
-                  </div>
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold">
+                <div className="flex items-center gap-3 rounded-full border border-slate-200 bg-white py-1 pl-1 pr-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
                     {user?.name?.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="leading-tight">
+                    <p className="text-sm font-bold text-slate-900">{user?.name}</p>
+                    {user?.isPremium && <p className="text-xs font-semibold text-amber-600">{t('nav.premium')}</p>}
                   </div>
                 </div>
                 <button
                   onClick={logout}
-                  className="text-sm text-slate-600 hover:text-red-600 font-medium transition-colors"
+                  className="text-sm font-semibold text-slate-500 transition-colors hover:text-red-600"
                 >
                   {t('auth.logout')}
                 </button>
               </>
             ) : (
               <>
-                <button
-                  onClick={() => setShowAuthModal(true)}
-                  className="btn-secondary text-sm py-2 px-4"
-                >
+                <button onClick={() => setShowAuthModal(true)} className="btn-secondary px-4 py-2 text-sm">
                   {t('auth.login')}
                 </button>
-                <Link
-                  href="/premium"
-                  className="flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700 transition-colors hover:bg-blue-100"
-                >
+                <Link href="/premium" className="rounded-xl bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-700 transition-colors hover:bg-emerald-100">
                   {t('nav.premium')}
-                  <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs text-orange-600">
-                    {t('app.soon')}
-                  </span>
                 </Link>
               </>
             )}
@@ -191,33 +154,22 @@ export default function Header() {
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden flex items-center justify-center w-10 h-10 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-700 transition-colors hover:bg-slate-100 md:hidden"
             aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            )}
+            {mobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
           </button>
         </div>
 
-        <div
-          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-[600px] opacity-100 mt-4' : 'max-h-0 opacity-0'
-            }`}
-        >
-          <nav className="pt-4 pb-2 space-y-1 border-t border-slate-100">
-            <div className="flex items-center gap-2 px-3 mb-2">
+        <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-[720px] opacity-100 pb-4' : 'max-h-0 opacity-0'}`}>
+          <nav className="space-y-1 border-t border-slate-100 pt-4">
+            <div className="mb-3 flex items-center gap-2 px-1">
               {LANGUAGE_OPTIONS.map((option) => (
                 <button
                   key={option.lang}
                   type="button"
                   onClick={() => setLang(option.lang)}
-                  className={`px-2 py-1 rounded text-xs border ${lang === option.lang ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-white text-slate-600 border-slate-200'}`}
+                  className={`rounded-lg border px-3 py-2 text-xs font-semibold ${lang === option.lang ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 bg-white text-slate-600'}`}
                 >
                   <span className="inline-flex items-center gap-1.5">
                     <LangSwatch lang={option.lang} />
@@ -227,38 +179,31 @@ export default function Header() {
               ))}
             </div>
 
-            <MobileNavLink href="/" label={t('nav.home')} onClick={() => setMobileMenuOpen(false)} />
-            <MobileNavLink href="/rates" label={t('nav.rates')} onClick={() => setMobileMenuOpen(false)} />
-            {isAuthenticated && (
-              <>
-                <MobileNavLink href="/dashboard" label={t('nav.dashboard')} onClick={() => setMobileMenuOpen(false)} />
-                <MobileNavLink href="/alerts" label={t('nav.alerts')} onClick={() => setMobileMenuOpen(false)} />
-                <MobileNavLink
-                  href="/notifications"
-                  label={`${t('nav.notifications')}${unreadNotifications > 0 ? ` (${unreadNotifications > 99 ? '99+' : unreadNotifications})` : ''}`}
-                  onClick={() => setMobileMenuOpen(false)}
-                />
-                <MobileNavLink href="/admin" label={t('nav.admin')} onClick={() => setMobileMenuOpen(false)} />
-              </>
-            )}
-            <MobileNavLink href="/api-docs" label={t('nav.apiDocsMobile')} onClick={() => setMobileMenuOpen(false)} />
+            {navLinks.map((link) => (
+              <MobileNavLink
+                key={link.href}
+                href={link.href}
+                label={`${link.label}${link.badge && link.badge > 0 ? ` (${link.badge > 99 ? '99+' : link.badge})` : ''}`}
+                onClick={() => setMobileMenuOpen(false)}
+              />
+            ))}
             <MobileNavLink href="/premium" label={t('nav.premium')} onClick={() => setMobileMenuOpen(false)} />
 
-            <div className="pt-3 border-t border-slate-100 mt-2">
+            <div className="mt-3 border-t border-slate-100 pt-3">
               {isAuthenticated ? (
-                <div className="flex items-center justify-between px-3 py-2">
+                <div className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold text-sm">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
                       {user?.name?.charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-sm font-semibold text-slate-900">{user?.name}</span>
+                    <span className="text-sm font-bold text-slate-900">{user?.name}</span>
                   </div>
                   <button
                     onClick={() => {
                       logout();
                       setMobileMenuOpen(false);
                     }}
-                    className="text-sm text-red-600 font-medium"
+                    className="text-sm font-semibold text-red-600"
                   >
                     {t('auth.logout')}
                   </button>
@@ -287,10 +232,51 @@ function MobileNavLink({ href, label, onClick }: { href: string; label: string; 
     <Link
       href={href}
       onClick={onClick}
-      className="block px-3 py-2.5 rounded-lg text-slate-700 hover:bg-blue-50 hover:text-blue-600 font-medium transition-colors text-sm"
+      className="block rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
     >
       {label}
     </Link>
+  );
+}
+
+function NotificationBadge({ count }: { count: number }) {
+  return (
+    <span className="flex min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 py-0.5 text-[11px] font-bold text-white">
+      {count > 99 ? '99+' : count}
+    </span>
+  );
+}
+
+function LogoMark() {
+  return (
+    <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h10m0 0-3-3m3 3-3 3M17 17H7m0 0 3 3m-3-3 3-3" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18Z" />
+    </svg>
+  );
+}
+
+function ChevronDownIcon() {
+  return (
+    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
+function MenuIcon() {
+  return (
+    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+    </svg>
   );
 }
 
@@ -307,15 +293,14 @@ function LangSwatch({ lang }: { lang: Lang }) {
 
   return (
     <svg viewBox="0 0 60 30" className="inline-block h-3.5 w-5 rounded-sm border border-slate-200" aria-hidden="true">
-      <clipPath id="t">
+      <clipPath id="union-flag-clip">
         <path d="M0,0 v30 h60 v-30 z" />
       </clipPath>
       <path d="M0,0 v30 h60 v-30 z" fill="#012169" />
       <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6" />
-      <path d="M0,0 L60,30 M60,0 L0,30" clipPath="url(#t)" stroke="#C8102E" strokeWidth="4" />
+      <path d="M0,0 L60,30 M60,0 L0,30" clipPath="url(#union-flag-clip)" stroke="#C8102E" strokeWidth="4" />
       <path d="M30,0 v30 M0,15 h60" stroke="#fff" strokeWidth="10" />
       <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" strokeWidth="6" />
     </svg>
   );
 }
-
